@@ -708,7 +708,8 @@ func (c *Client) Recv() (stanza interface{}, err error) {
 						Errors: nil,
 					}, nil
 				case "items1":
-					if adhocIsCommandList(v.Query) {
+					if v.Query.XMLNS == XMPPNS_DISCO_ITEMS &&
+						v.Query.Node == XMPPNS_DISCO_COMMANDS {
 						return adhocParseCommandList(v.Query.InnerXML)
 					}
 				case "exec1":
@@ -721,23 +722,13 @@ func (c *Client) Recv() (stanza interface{}, err error) {
 
 					// Figure out if we know the command
 					switch cmd.Node {
-					case "uptime":
-						var up clientUptimeNote
-						err := xml.Unmarshal(cmd.Data, &up)
-						if err != nil {
-							return Uptime{}, err
-						}
-
-						return Uptime{
-							string(up.InnerXML),
+					default:
+						return AdhocResult{
+							cmd.Node,
+							cmd.Status,
+							cmd.Data,
 						}, nil
 					}
-
-					return AdhocResult{
-						cmd.Node,
-						cmd.Status,
-						cmd.Data,
-					}, nil
 				case "info3", "info1":
 					if v.Query.XMLNS == XMPPNS_DISCO_INFO {
 						var disco clientDiscoQuery
@@ -1036,7 +1027,7 @@ type clientIQ struct {
 	Error   clientError
 	Bind    bindBind
 
-	InnerXML []byte    `xml:",innerxml"`
+	InnerXML []byte `xml:",innerxml"`
 }
 
 type clientError struct {

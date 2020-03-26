@@ -6,16 +6,9 @@ import (
 	"encoding/xml"
 )
 
-const (
-	XMPPNS_DISCO_ITEMS = "http://jabber.org/protocol/disco#items"
-	XMPPNS_DISCO_INFO = "http://jabber.org/protocol/disco#info"
-
-	XMPPNS_DISCO_COMMANDS = "http://jabber.org/protocol/commands"
-
-	IQTypeGet = "get"
-	IQTypeSet = "set"
-	IQTypeResult = "result"
-)
+const IQTypeGet = "get"
+const IQTypeSet = "set"
+const IQTypeResult = "result"
 
 type clientDiscoFeature struct {
 	XMLName xml.Name `xml:"feature"`

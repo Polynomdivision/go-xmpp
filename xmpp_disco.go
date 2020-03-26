@@ -7,6 +7,8 @@ import (
 const (
 	XMPPNS_DISCO_ITEMS = "http://jabber.org/protocol/disco#items"
 	XMPPNS_DISCO_INFO  = "http://jabber.org/protocol/disco#info"
+
+	XMPPNS_DISCO_COMMANDS = "http://jabber.org/protocol/commands"
 )
 
 type clientDiscoFeature struct {
