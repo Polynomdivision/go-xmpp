@@ -75,9 +75,26 @@ func main() {
 				fmt.Println(v.Remote, v.Text)
 			case xmpp.Presence:
 				fmt.Println(v.From, v.Show)
+			case []xmpp.AdhocCommand:
+				for _, c := range v {
+						fmt.Printf("- JID: %s\n  Name: %s\n  Node: %s\n", c.JID, c.Name, c.Node)				
+				}
+			case xmpp.Uptime:
+				fmt.Printf("Uptime: %s\n", v.Uptime)
+			case xmpp.DiscoResult:
+				fmt.Println("Features:")
+				for _, f := range v.Features {
+					fmt.Printf("- %s\n", f)
+				}
+
+				fmt.Println("Identities:")
+				for _, i := range v.Identities {
+					fmt.Printf("- Name: %s\n  Type: %s\n  Category: %s\n", i.Name, i.Type, i.Category)
+				}
 			}
 		}
 	}()
+
 	for {
 		in := bufio.NewReader(os.Stdin)
 		line, err := in.ReadString('\n')
@@ -86,9 +103,21 @@ func main() {
 		}
 		line = strings.TrimRight(line, "\n")
 
-		tokens := strings.SplitN(line, " ", 2)
-		if len(tokens) == 2 {
-			talk.Send(xmpp.Chat{Remote: tokens[0], Type: "chat", Text: tokens[1]})
+		switch line {
+		case "discoComs":
+			// Perform a disco request
+			//talk.DiscoverNode(xmpp.XMPPNS_DISCO_COMMANDS)
+			talk.AdhocGetCommands()
+		case "discoItems":
+			// Perform a disco request
+			talk.DiscoverItems()
+		case "uptime":
+			talk.AdhocExecuteCommand("uptime")
 		}
+		
+		// tokens := strings.SplitN(line, " ", 2)
+		// if len(tokens) == 2 {
+		// 	talk.Send(xmpp.Chat{Remote: tokens[0], Type: "chat", Text: tokens[1]})
+		// }
 	}
 }
